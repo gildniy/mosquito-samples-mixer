@@ -1,6 +1,6 @@
-import datetime
 import os
-import random
+from datetime import datetime
+from random import random
 
 
 def increment_sample_counter(name):
@@ -16,7 +16,7 @@ def increment_sample_counter(name):
     i = 0
     while i < 1000000:
         """
-        A 7 is a ten digit number, it can be relatively large 
+        A 7 is a ten digit number, it can be relatively large
         and cannot be reached easily.
         Example: 921559
         """
@@ -31,16 +31,10 @@ def increment_sample_counter(name):
     return i + 1
 
 
-def mix_mosquitoes(samples_filename):
-    number = increment_sample_counter('sample_no_')
-
-    if number != 0:
-
-        with open(f"{samples_filename}.txt", "a") as f1:
-            types = ("TO", "AE", "CT", "CP")
-            has_visible = 'YES'
-            has_uv = 'NO or YES'
-
+def mix_mosquitoes(samples_filename, num=2):
+    with open(f"{samples_filename}.txt", "a") as f:
+        number = increment_sample_counter('sample_no_')
+        if number != 0:
             """
             We use a string representing the actual sample number with 7
             leading zeros.
@@ -48,41 +42,44 @@ def mix_mosquitoes(samples_filename):
             """
             new_sample_no = "%07d" % number
 
-            # Table with sample identification details
-            f1.write("\n\n *===========================*"
-                     f"\n | Sample Number:    {new_sample_no} |"
-                     f"\n | Visible :             {has_visible} |"
-                     f"\n | UV:             {has_uv} |\n"
-                     )
+            f.write(f"\n\n *===========================*"
+                    f"\n | Sample Number:    {new_sample_no} |"
+                    f"\n | Visible :             YES |"
+                    f"\n | UV:             NO or YES |\n")
 
             print("\n *===========================*"
                   f"\n | Sample Number:    {new_sample_no} |"
-                  f"\n | Visible :             {has_visible} |"
-                  f"\n | UV:             {has_uv} |")
+                  f"\n | Visible :             YES |"
+                  f"\n | UV:             NO or YES |")
 
-            for i in range(4):
-                _sorted = sorted(types, key=lambda x: random.random())
-
+            types = ["TO", "AE", "CT", "CP"]
+            num = (1, num)[num > 0]
+            n_side_len = 2 ** num
+            shuffled = sorted([*types] * (4 ** (num - 1)),
+                              key=lambda x: random())
+            k = 0
+            for i in range(n_side_len):
                 row = " |  "
                 sep = " *"
+                for j in range(n_side_len):
+                    row = f"{row}{shuffled[k]}  |  "
+                    sep = f"{sep}------*"
+                    k += 1
 
-                for j in range(4):
-                    row = row + _sorted[j] + "  |  "
-                    sep = sep + "------*"
-
-                f1.write(f"{sep}\n{row}\n")
+                f.write(f"{sep}\n{row}\n")
                 print(f"{sep}\n{row}")
+                pass
 
-            # Tables footer with Term Mappings
-            f1.write(" *------*------*------*------*"
-                     "\n | TO: ..................... |"
-                     "\n | AE: ..................... |"
-                     "\n | CT: ..................... |"
-                     "\n | CP: ..................... |"
-                     "\n |                           |"
-                     f"\n |       "
-                     f"{datetime.datetime.now().strftime('%Y.%m.%d %I:%M %p')} |"
-                     "\n *------*------*------*------*")
+            nowTime = datetime.now().strftime('%Y.%m.%d %I:%M %p')
+            f.write(" *------*------*------*------*"
+                    "\n | TO: ..................... |"
+                    "\n | AE: ..................... |"
+                    "\n | CT: ..................... |"
+                    "\n | CP: ..................... |"
+                    "\n |                           |"
+                    f"\n |       "
+                    f"{nowTime} |"
+                    "\n *------*------*------*------*")
 
             print(" *------*------*------*------*"
                   "\n | TO: ..................... |"
@@ -91,11 +88,11 @@ def mix_mosquitoes(samples_filename):
                   "\n | CP: ..................... |"
                   "\n |                           |"
                   f"\n |       "
-                  f"{datetime.datetime.now().strftime('%Y.%m.%d %I:%M %p')} |"
+                  f"{nowTime} |"
                   "\n *------*------*------*------*")
-    else:
-        print("GENERATING THE INITIAL FILE (sample_no_0) IN THE FOLDER")
+        else:
+            print("GENERATING THE INITIAL FILE (sample_no_0) IN THE FOLDER")
 
 
 if __name__ == "__main__":
-    mix_mosquitoes("mix_mosquitoes")
+    mix_mosquitoes("mix_mosquitoes", 2)
