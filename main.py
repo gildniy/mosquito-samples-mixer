@@ -3,18 +3,19 @@ from datetime import datetime
 from random import random
 
 
-def increment_sample_counter(name):
+def increment_sample_counter(name, total):
     """
     Create or rename a counter file depending on the no of the current
     mosquitoes sample. The initial counter file needs to be in the root
     folder with this script...
     Example: An empty file called "sample_no_1.txt"
 
+    :param total: Number
     :param name: String
     :return: Object
     """
     i = 0
-    while i < 1000000:
+    while i < total:
         """
         A 7 is a ten digit number, it can be relatively large
         and cannot be reached easily.
@@ -32,9 +33,12 @@ def increment_sample_counter(name):
 
 
 def mix_mosquitoes(samples_filename, num=2):
-    with open(f"{samples_filename}.txt", "a") as f:
-        number = increment_sample_counter('sample_no_')
-        if number != 0:
+    with open(f"{samples_filename}.md", "a") as f:
+
+        total_samples = 1000000
+        number = increment_sample_counter('sample_no_', total_samples)
+
+        if number != total_samples + 1:
             """
             We use a string representing the actual sample number with 7
             leading zeros.
@@ -42,7 +46,7 @@ def mix_mosquitoes(samples_filename, num=2):
             """
             new_sample_no = "%07d" % number
 
-            f.write(f"\n\n *===========================*"
+            f.write(f"\n```\n *===========================*"
                     f"\n | Sample Number:    {new_sample_no} |"
                     f"\n | Visible :             YES |"
                     f"\n | UV:             NO or YES |\n")
@@ -79,7 +83,8 @@ def mix_mosquitoes(samples_filename, num=2):
                     "\n |                           |"
                     f"\n |       "
                     f"{nowTime} |"
-                    "\n *------*------*------*------*")
+                    "\n *------*------*------*------*"
+                    "\n```\n")
 
             print(" *------*------*------*------*"
                   "\n | TO: ..................... |"
